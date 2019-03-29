@@ -1,7 +1,9 @@
 package uk.co.tomek.orderbook.ui.custom;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.text.TextPaint;
@@ -11,7 +13,6 @@ import android.view.View;
 import java.util.Random;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import uk.co.tomek.orderbook.R;
 
 /**
@@ -40,10 +41,17 @@ public class BarView extends View {
     public BarView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        int baseColor = ContextCompat.getColor(getContext(), R.color.colorAccent);
-        basePaint.setColor(baseColor);
-        float textSize = getResources().getDimension(R.dimen.gap_medium);
-        textPaint.setTextSize(textSize);
+        TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.BarView, defStyleAttr, 0);
+        try {
+            int baseColor = attributes.getColor(R.styleable.BarView_itemColor, Color.BLUE);
+            basePaint.setColor(baseColor);
+            final int defaultTextSize = getResources().getDimensionPixelSize(R.dimen.gap_medium);
+            float textSize = attributes.getDimension(R.styleable.BarView_itemTextSize, defaultTextSize);
+            textPaint.setTextSize(textSize);
+        } finally {
+            attributes.recycle();
+        }
+
         sizeFriction = randomizer.nextFloat();
     }
 
