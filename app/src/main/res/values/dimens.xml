@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="gap_single">1dp</dimen>
+    <dimen name="gap_tinier">2dp</dimen>
+    <dimen name="gap_tiny">4dp</dimen>
+    <dimen name="gap_tiny_negative">-4dp</dimen>
+    <dimen name="gap_small">8dp</dimen>
+    <dimen name="gap_medium">16dp</dimen>
+    <dimen name="gap_intermediate">24dp</dimen>
+    <dimen name="gap_large">32dp</dimen>
+    <dimen name="gap_very_large">48dp</dimen>
+    <dimen name="gap_big">64dp</dimen>
+
+</resources>

@@ -3,6 +3,8 @@ package uk.co.tomek.orderbook.ui.custom;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -18,6 +20,10 @@ import uk.co.tomek.orderbook.R;
 public class BarView extends View {
 
     private Paint basePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+    private Paint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG | Paint.LINEAR_TEXT_FLAG);
+
+    private Rect textRectangle = new Rect();
 
     private float sizeFriction;
 
@@ -36,6 +42,8 @@ public class BarView extends View {
 
         int baseColor = ContextCompat.getColor(getContext(), R.color.colorAccent);
         basePaint.setColor(baseColor);
+        float textSize = getResources().getDimension(R.dimen.gap_medium);
+        textPaint.setTextSize(textSize);
         sizeFriction = randomizer.nextFloat();
     }
 
@@ -52,7 +60,15 @@ public class BarView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        // draw line
         float xEndPosition = getWidth() * sizeFriction;
-        canvas.drawLine(0, getHeight()/2f, xEndPosition, getHeight()/2f, basePaint);
+        canvas.drawLine(0, getHeight() / 2f, xEndPosition, getHeight() / 2f, basePaint);
+
+        // draw text
+        final String sizeFrictionString = Float.toString(sizeFriction);
+        textPaint.getTextBounds(sizeFrictionString, 0, sizeFrictionString.length(), textRectangle);
+        float textXpos = getWidth() / 2f - textRectangle.width() / 2f;
+        float textYpos = getHeight() / 2f + textRectangle.height() / 2f;
+        canvas.drawText(sizeFrictionString, textXpos, textYpos, textPaint);
     }
 }
