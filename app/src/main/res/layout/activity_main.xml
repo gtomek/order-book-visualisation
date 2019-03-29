@@ -1,18 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                   xmlns:tools="http://schemas.android.com/tools"
-                                                   android:layout_width="match_parent"
-                                                   android:layout_height="match_parent"
-                                                   tools:context=".MainActivity">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.MainActivity"
+    >
+    
+    <uk.co.tomek.orderbook.ui.custom.BarView
+        android:id="@+id/barview_sell_1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/barview_sell_2"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@color/colorPrimaryDark"
+        />
+    
+    <uk.co.tomek.orderbook.ui.custom.BarView
+        android:id="@+id/barview_sell_2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/barview_sell_3"
+        app:layout_constraintTop_toBottomOf="@+id/barview_sell_1"
+        tools:background="@color/colorAccent"
+        />
+    
+    <uk.co.tomek.orderbook.ui.custom.BarView
+        android:id="@+id/barview_sell_3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/barview_sell_4"
+        app:layout_constraintTop_toBottomOf="@+id/barview_sell_2"
+        tools:background="@color/colorPrimary"
+        />
+    
+    <uk.co.tomek.orderbook.ui.custom.BarView
+        android:id="@+id/barview_sell_4"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/barview_central"
+        app:layout_constraintTop_toBottomOf="@+id/barview_sell_3"
+        />
+    
+    <uk.co.tomek.orderbook.ui.custom.BarView
+        android:id="@+id/barview_central"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/barview_buy_1"
+        app:layout_constraintTop_toBottomOf="@+id/barview_sell_4"
+        tools:background="@color/colorAccent"
+        />
+    
+    <uk.co.tomek.orderbook.ui.custom.BarView
+        android:id="@+id/barview_buy_1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/barview_buy_2"
+        app:layout_constraintTop_toBottomOf="@+id/barview_central"
+        tools:background="@color/colorPrimaryDark"
+        />
+    
+    <uk.co.tomek.orderbook.ui.custom.BarView
+        android:id="@+id/barview_buy_2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/barview_buy_3"
+        app:layout_constraintTop_toBottomOf="@+id/barview_buy_1"
+        tools:background="@color/colorPrimary"
+        />
+    
+    <uk.co.tomek.orderbook.ui.custom.BarView
+        android:id="@+id/barview_buy_3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/barview_buy_4"
+        app:layout_constraintTop_toBottomOf="@+id/barview_buy_2"
+        
+        />
+    
+    <uk.co.tomek.orderbook.ui.custom.BarView
+        android:id="@+id/barview_buy_4"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toBottomOf="@+id/barview_buy_3"
+        tools:background="@color/colorAccent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
