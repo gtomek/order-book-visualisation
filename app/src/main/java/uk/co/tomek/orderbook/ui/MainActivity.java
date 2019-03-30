@@ -3,25 +3,20 @@ package uk.co.tomek.orderbook.ui;
 import android.os.Bundle;
 import android.view.View;
 
-import com.creditsuisse.orderbooksimulation.OrderBookData;
-import com.creditsuisse.orderbooksimulation.OrderBookSimulator;
-import com.creditsuisse.orderbooksimulation.OrderBookSimulatorListener;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import timber.log.Timber;
 import uk.co.tomek.orderbook.R;
+import uk.co.tomek.orderbook.domain.Interactor;
+import uk.co.tomek.orderbook.domain.InteractorListener;
 import uk.co.tomek.orderbook.domain.OrderBookInteractor;
 import uk.co.tomek.orderbook.domain.OrderBookMapper;
 import uk.co.tomek.orderbook.ui.custom.BarView;
-import uk.co.tomek.orderbook.ui.model.OrdersItem;
+import uk.co.tomek.orderbook.ui.model.OrdersViewItem;
 
-public class MainActivity extends AppCompatActivity implements OrderBookSimulatorListener {
+public class MainActivity extends AppCompatActivity implements InteractorListener {
 
-
-    OrderBookSimulator simulator;
-    OrderBookMapper mapper;
-    private OrderBookInteractor orderBookInteractor;
+    private Interactor orderBookInteractor;
     private BarView midPointView;
     private BarView sellItem1;
     private BarView sellItem2;
@@ -47,11 +42,9 @@ public class MainActivity extends AppCompatActivity implements OrderBookSimulato
         buyItem4 = findViewById(R.id.barview_buy_4);
         midPointView = findViewById(R.id.barview_central);
         // As we cannot use any library we cannot also use Dagger or similar therefore
-        // we have relay on creation of instances somewhere (probably will need to create
-        // Dependency Resolver in Application class
-        simulator = new OrderBookSimulator();
-        mapper = new OrderBookMapper();
-        orderBookInteractor = new OrderBookInteractor(simulator, this);
+        // we have to relay on creation of instances somewhere (We could also e.g. create a
+        // Dependency Resolver in Application class for application scoped instances)
+        orderBookInteractor = new OrderBookInteractor(new OrderBookMapper(), this);
     }
 
     @Override
@@ -62,57 +55,39 @@ public class MainActivity extends AppCompatActivity implements OrderBookSimulato
 
     @Override
     protected void onPause() {
-        orderBookInteractor.startOrderBook();
+        orderBookInteractor.stopOrderBook();
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
-        simulator = null;
+        //simulator = null;
         orderBookInteractor = null;
         super.onDestroy();
     }
 
-    @Override
-    public void simulationStarts() {
-        Timber.v("simulationStarts");
-    }
-
-    @Override
-    public void newTick(@NonNull OrderBookData orderBookData) {
-        final OrdersItem ordersItems = mapper.mapOrderBook(orderBookData);
-        Timber.v("newTick %s ordersItems:%s", orderBookData.tick, ordersItems);
-        midPointView.setTitle(ordersItems.getMidPointTitle());
-        sellItem1.setValues(ordersItems.getSellList().get(0));
-        sellItem2.setValues(ordersItems.getSellList().get(1));
-        sellItem3.setValues(ordersItems.getSellList().get(2));
-        sellItem4.setValues(ordersItems.getSellList().get(3));
-        buyItem1.setValues(ordersItems.getBuyList().get(0));
-        buyItem2.setValues(ordersItems.getBuyList().get(1));
-        buyItem3.setValues(ordersItems.getBuyList().get(2));
-        buyItem4.setValues(ordersItems.getBuyList().get(3));
-    }
-
-    @Override
-    public void simulationCompleted() {
-        Timber.v("simulationCompleted");
-    }
-
     private void hideSystemUI() {
-        // Enables regular immersive mode.
-        // For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-        // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_IMMERSIVE
-                        // Set the content to appear under the system bars so that the
-                        // content doesn't resize when the system bars hide and show.
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        // Hide the nav bar and status bar
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
+    @Override
+    public void onNewFormattedOrderTick(@NonNull OrdersViewItem ordersViewItem) {
+        Timber.v("newTick ordersItems:%s",  ordersViewItem);
+        midPointView.setTitle(ordersViewItem.getMidPointTitle());
+        sellItem1.setValues(ordersViewItem.getSellList().get(0));
+        sellItem2.setValues(ordersViewItem.getSellList().get(1));
+        sellItem3.setValues(ordersViewItem.getSellList().get(2));
+        sellItem4.setValues(ordersViewItem.getSellList().get(3));
+        buyItem1.setValues(ordersViewItem.getBuyList().get(0));
+        buyItem2.setValues(ordersViewItem.getBuyList().get(1));
+        buyItem3.setValues(ordersViewItem.getBuyList().get(2));
+        buyItem4.setValues(ordersViewItem.getBuyList().get(3));
+    }
 }

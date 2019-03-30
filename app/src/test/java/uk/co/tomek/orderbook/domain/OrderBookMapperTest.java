@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.co.tomek.orderbook.ui.model.OrdersItem;
+import uk.co.tomek.orderbook.ui.model.OrdersViewItem;
 
 import static org.junit.Assert.assertEquals;
 
@@ -40,7 +40,7 @@ public class OrderBookMapperTest {
         String expectedMidPointPrince = "9996";
 
         // when
-        OrdersItem result = mapper.mapOrderBook(orderBookData);
+        OrdersViewItem result = mapper.mapOrderBook(orderBookData);
 
         // then
         assertEquals(expectedMidPointPrince, result.getMidPointTitle());
@@ -52,7 +52,7 @@ public class OrderBookMapperTest {
         float sellFriction1 = 0.38f;
 
         // when
-        OrdersItem result = mapper.mapOrderBook(orderBookData);
+        OrdersViewItem result = mapper.mapOrderBook(orderBookData);
 
         // then
         assertEquals(sellFriction1, result.getSellList().get(0).getPriceFriction(), 0.002);
@@ -64,7 +64,7 @@ public class OrderBookMapperTest {
         float buyFriction1 = 0.395f;
 
         // when
-        OrdersItem result = mapper.mapOrderBook(orderBookData);
+        OrdersViewItem result = mapper.mapOrderBook(orderBookData);
 
         // then
         assertEquals(buyFriction1, result.getBuyList().get(3).getPriceFriction(), 0.002);

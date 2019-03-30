@@ -9,7 +9,7 @@ import java.util.List;
 
 import uk.co.tomek.orderbook.data.OrderBookRepository;
 import uk.co.tomek.orderbook.ui.model.OrderRaw;
-import uk.co.tomek.orderbook.ui.model.OrdersItem;
+import uk.co.tomek.orderbook.ui.model.OrdersViewItem;
 
 /**
  * Provides mapping between Order book events received from the {@link OrderBookRepository}
@@ -17,7 +17,7 @@ import uk.co.tomek.orderbook.ui.model.OrdersItem;
  */
 public final class OrderBookMapper {
 
-    public OrdersItem mapOrderBook(OrderBookData orderBookData) {
+    public OrdersViewItem mapOrderBook(OrderBookData orderBookData) {
         LinkedList<OrderRaw> sellViewList = new LinkedList<>();
         LinkedList<OrderRaw> buyViewList = new LinkedList<>();
 
@@ -43,7 +43,7 @@ public final class OrderBookMapper {
             buyViewList.add(new OrderRaw(priceFriction, Long.toString(priceData.price)));
         }
 
-        return new OrdersItem(sellViewList, midPriceTitle, buyViewList);
+        return new OrdersViewItem(sellViewList, midPriceTitle, buyViewList);
     }
 
     private long getTotalQuantity(List<PriceLevelData> orderData) {

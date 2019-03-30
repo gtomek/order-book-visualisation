@@ -6,13 +6,13 @@ import java.util.List;
 /**
  * Data class representing converted order data, ready to be displayed on the screen.
  */
-public final class OrdersItem {
+public final class OrdersViewItem {
 
     private final List<OrderRaw> sellList;
     private final String midPointTitle;
     private final List<OrderRaw> buyList;
 
-    public OrdersItem(LinkedList<OrderRaw> sellList, String midPointTitle, List<OrderRaw> buyList) {
+    public OrdersViewItem(LinkedList<OrderRaw> sellList, String midPointTitle, List<OrderRaw> buyList) {
         this.sellList = sellList;
         this.midPointTitle = midPointTitle;
         this.buyList = buyList;
