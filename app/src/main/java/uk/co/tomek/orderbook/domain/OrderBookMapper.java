@@ -24,6 +24,7 @@ public final class OrderBookMapper {
         long maxBuyPrice = findMaxPrice(orderBookData.buySideData);
         String midPriceTitle = Long.toString((minSellPrice + maxBuyPrice) / 2);
 
+        // TODO: Improvements to be done, excessive looping thorough the same list
         long totalSellQuantity = getTotalQuantity(orderBookData.sellSideData);
         for (PriceLevelData priceData : orderBookData.sellSideData) {
             float priceFriction = (float) priceData.assetCount/totalSellQuantity;

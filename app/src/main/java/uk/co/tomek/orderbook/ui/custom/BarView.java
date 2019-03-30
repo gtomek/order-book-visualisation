@@ -10,10 +10,9 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
-import java.util.Random;
-
 import androidx.annotation.Nullable;
 import uk.co.tomek.orderbook.R;
+import uk.co.tomek.orderbook.ui.model.OrderRaw;
 
 /**
  * Custom view representing one graph item.
@@ -28,7 +27,7 @@ public class BarView extends View {
 
     private float sizeFriction;
 
-    Random randomizer = new Random(); // TODO: remove it, temp solution for debug
+    private String title = "";
 
     public BarView(Context context) {
         this(context, null, 0);
@@ -51,13 +50,6 @@ public class BarView extends View {
         } finally {
             attributes.recycle();
         }
-
-        sizeFriction = randomizer.nextFloat();
-    }
-
-    public void setSizeFriction(float sizeFriction) {
-        this.sizeFriction = sizeFriction;
-        invalidate();
     }
 
     @Override
@@ -73,10 +65,21 @@ public class BarView extends View {
         canvas.drawLine(0, getHeight() / 2f, xEndPosition, getHeight() / 2f, basePaint);
 
         // draw text
-        final String sizeFrictionString = Float.toString(sizeFriction);
-        textPaint.getTextBounds(sizeFrictionString, 0, sizeFrictionString.length(), textRectangle);
+        textPaint.getTextBounds(title, 0, title.length(), textRectangle);
         float textXpos = getWidth() / 2f - textRectangle.width() / 2f;
         float textYpos = getHeight() / 2f + textRectangle.height() / 2f;
-        canvas.drawText(sizeFrictionString, textXpos, textYpos, textPaint);
+        canvas.drawText(title, textXpos, textYpos, textPaint);
+    }
+
+    public void setValues(OrderRaw orderRaw) {
+        sizeFriction = orderRaw.getPriceFriction();
+        title = orderRaw.getTitle();
+        invalidate();
+    }
+
+    public void setTitle(String midPointTitle) {
+        sizeFriction = 0;
+        title = midPointTitle;
+        invalidate();
     }
 }
