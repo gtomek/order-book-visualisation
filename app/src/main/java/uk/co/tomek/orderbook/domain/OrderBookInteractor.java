@@ -6,7 +6,7 @@ import com.creditsuisse.orderbooksimulation.OrderBookSimulatorListener;
 /**
  * Allows to start stop Order Book events source.
  */
-public class OrderBookInteractor implements Interactor {
+public final class OrderBookInteractor implements Interactor {
 
     private final OrderBookSimulator simulator;
     private final OrderBookSimulatorListener listener;
