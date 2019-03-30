@@ -26,7 +26,8 @@ public final class OrderBookMapper {
 
         // TODO: Improvements to be done, excessive looping thorough the same list
         long totalSellQuantity = getTotalQuantity(orderBookData.sellSideData);
-        for (PriceLevelData priceData : orderBookData.sellSideData) {
+        for (int i = orderBookData.sellSideData.size() - 1; i >= 0; i--) {
+            PriceLevelData priceData = orderBookData.sellSideData.get(i);
             float priceFriction = (float) priceData.assetCount/totalSellQuantity;
             sellList.add(new OrderRaw(priceFriction, Long.toString(priceData.price)));
         }
