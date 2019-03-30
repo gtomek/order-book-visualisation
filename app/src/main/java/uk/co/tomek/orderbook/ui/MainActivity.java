@@ -18,12 +18,10 @@ import uk.co.tomek.orderbook.ui.model.OrdersItem;
 
 public class MainActivity extends AppCompatActivity implements OrderBookSimulatorListener {
 
-    // As we cannot use any library we cannot also use Dagger or similar therefore
-    // we have relay on creation of instances somewhere (probably will need to create
-    // Dependency Resolver in Application class
-    OrderBookSimulator simulator = new OrderBookSimulator();
-    OrderBookMapper mapper = new OrderBookMapper();
-    private OrderBookInteractor orderBookInteractor = new OrderBookInteractor(simulator, this);
+
+    OrderBookSimulator simulator;
+    OrderBookMapper mapper;
+    private OrderBookInteractor orderBookInteractor;
     private BarView midPointView;
     private BarView sellItem1;
     private BarView sellItem2;
@@ -48,6 +46,12 @@ public class MainActivity extends AppCompatActivity implements OrderBookSimulato
         buyItem3 = findViewById(R.id.barview_buy_3);
         buyItem4 = findViewById(R.id.barview_buy_4);
         midPointView = findViewById(R.id.barview_central);
+        // As we cannot use any library we cannot also use Dagger or similar therefore
+        // we have relay on creation of instances somewhere (probably will need to create
+        // Dependency Resolver in Application class
+        simulator = new OrderBookSimulator();
+        mapper = new OrderBookMapper();
+        orderBookInteractor = new OrderBookInteractor(simulator, this);
     }
 
     @Override
@@ -60,6 +64,13 @@ public class MainActivity extends AppCompatActivity implements OrderBookSimulato
     protected void onPause() {
         orderBookInteractor.startOrderBook();
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        simulator = null;
+        orderBookInteractor = null;
+        super.onDestroy();
     }
 
     @Override
