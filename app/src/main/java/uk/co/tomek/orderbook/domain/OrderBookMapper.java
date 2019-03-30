@@ -22,16 +22,29 @@ public final class OrderBookMapper {
 
         long minSellPrice = findMinPrice(orderBookData.sellSideData);
         long maxBuyPrice = findMaxPrice(orderBookData.buySideData);
-        final long minPrice = (minSellPrice + maxBuyPrice) / 2;
-        String midPriceTitle = Long.toString(minPrice);
+        String midPriceTitle = Long.toString((minSellPrice + maxBuyPrice) / 2);
+
+        long totalSellQuantity = getTotalQuantity(orderBookData.sellSideData);
+        for (PriceLevelData priceData : orderBookData.sellSideData) {
+            float priceFriction = (float) priceData.assetCount/totalSellQuantity;
+            sellList.add(new OrderRaw(priceFriction, Long.toString(priceData.price)));
+        }
+
+        long totalBuyQuantity = getTotalQuantity(orderBookData.buySideData);
+        for (PriceLevelData priceData : orderBookData.buySideData) {
+            float priceFriction = (float) priceData.assetCount/totalBuyQuantity;
+            buyList.add(new OrderRaw(priceFriction, Long.toString(priceData.price)));
+        }
+
+
         return new OrdersItem(sellList, midPriceTitle, buyList);
     }
 
     private long findMinPrice(List<PriceLevelData> orderData) {
         long minPrice = orderData.get(0).price;
-        for (PriceLevelData buyData : orderData) {
-            if (buyData.price < minPrice) {
-                minPrice = buyData.price;
+        for (PriceLevelData priceData : orderData) {
+            if (priceData.price < minPrice) {
+                minPrice = priceData.price;
             }
         }
         return minPrice;
@@ -39,11 +52,19 @@ public final class OrderBookMapper {
 
     private long findMaxPrice(List<PriceLevelData> orderData) {
         long maxPrice = orderData.get(0).price;
-        for (PriceLevelData buyData : orderData) {
-            if (buyData.price > maxPrice) {
-                maxPrice = buyData.price;
+        for (PriceLevelData priceData : orderData) {
+            if (priceData.price > maxPrice) {
+                maxPrice = priceData.price;
             }
         }
         return maxPrice;
+    }
+
+    private long getTotalQuantity(List<PriceLevelData> orderData) {
+        long totalQuantity = 0;
+        for (PriceLevelData priceData : orderData) {
+            totalQuantity += priceData.assetCount;
+        }
+        return totalQuantity;
     }
 }

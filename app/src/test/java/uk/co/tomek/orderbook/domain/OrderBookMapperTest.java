@@ -45,4 +45,28 @@ public class OrderBookMapperTest {
         // then
         assertEquals(expectedMidPointPrince, result.getMidPointTitle());
     }
+
+    @Test
+    public void verifySellQuantities() {
+        // given
+        float sellFriction1 = 0.38f;
+
+        // when
+        OrdersItem result = mapper.mapOrderBook(orderBookData);
+
+        // then
+        assertEquals(sellFriction1, result.getSellList().get(0).getPriceFriction(), 0.002);
+    }
+
+    @Test
+    public void verifyBuyQuantities() {
+        // given
+        float buyFriction1 = 0.395f;
+
+        // when
+        OrdersItem result = mapper.mapOrderBook(orderBookData);
+
+        // then
+        assertEquals(buyFriction1, result.getBuyList().get(3).getPriceFriction(), 0.002);
+    }
 }
