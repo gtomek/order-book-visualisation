@@ -46,8 +46,8 @@ public final class OrderBookInteractor implements Interactor, OrderBookSimulator
 
     @Override
     public void newTick(@NonNull OrderBookData orderBookData) {
-        final OrdersViewItem ordersViewItem = mapper.mapOrderBook(orderBookData);
         if (interactorListener != null) {
+            final OrdersViewItem ordersViewItem = mapper.mapOrderBook(orderBookData);
             interactorListener.onNewFormattedOrderTick(ordersViewItem);
         }
     }
