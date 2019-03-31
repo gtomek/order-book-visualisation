@@ -1,40 +1,50 @@
 package uk.co.tomek.orderbook.domain;
 
 import com.creditsuisse.orderbooksimulation.OrderBookData;
+import com.creditsuisse.orderbooksimulation.OrderBookSimulator;
+import com.creditsuisse.orderbooksimulation.OrderBookSimulatorListener;
 
 import androidx.annotation.NonNull;
-import uk.co.tomek.orderbook.data.OrderBookRepository;
-import uk.co.tomek.orderbook.data.Repository;
-import uk.co.tomek.orderbook.data.RepositoryListener;
+import timber.log.Timber;
 import uk.co.tomek.orderbook.ui.model.OrdersViewItem;
 
 /**
  * Allows to start stop Order Book events source.
  */
-public final class OrderBookInteractor implements Interactor, RepositoryListener {
+public final class OrderBookInteractor implements Interactor, OrderBookSimulatorListener {
 
-    private final Repository repository;
+    private final OrderBookSimulator simulator;
     private final OrderBookMapper mapper;
     private InteractorListener interactorListener;
 
-    public OrderBookInteractor(OrderBookRepository repository, OrderBookMapper mapper) {
-        this.repository = repository;
+    public OrderBookInteractor(OrderBookSimulator simulator, OrderBookMapper mapper) {
+        this.simulator = simulator;
         this.mapper = mapper;
     }
 
     @Override
     public void startOrderBook() {
-        repository.registerListener(this);
-        repository.startSimulator();
+        simulator.startSimulation(this);
     }
 
     @Override
     public void stopOrderBook() {
-        repository.stopSimulator();
+        simulator.stopSimulation();
     }
 
     @Override
-    public void onNewTick(@NonNull OrderBookData orderBookData) {
+    public void registerListener(InteractorListener interactorListener) {
+        this.interactorListener = interactorListener;
+    }
+
+    @Override
+    public void simulationStarts() {
+        Timber.v("simulationStarts");
+    }
+
+    @Override
+    public void newTick(@NonNull OrderBookData orderBookData) {
+        Timber.v("newTick %s", orderBookData);
         final OrdersViewItem ordersViewItem = mapper.mapOrderBook(orderBookData);
         if (interactorListener != null) {
             interactorListener.onNewFormattedOrderTick(ordersViewItem);
@@ -42,7 +52,7 @@ public final class OrderBookInteractor implements Interactor, RepositoryListener
     }
 
     @Override
-    public void registerListener(InteractorListener interactorListener) {
-        this.interactorListener = interactorListener;
+    public void simulationCompleted() {
+        Timber.v("simulationCompleted");
     }
 }

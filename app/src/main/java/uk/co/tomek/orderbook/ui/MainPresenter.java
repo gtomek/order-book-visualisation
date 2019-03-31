@@ -13,15 +13,15 @@ public final class MainPresenter implements Presenter, InteractorListener {
     private final Interactor interactor;
     private MainView view;
 
-    public MainPresenter(Interactor interactor) {
+    MainPresenter(Interactor interactor) {
         this.interactor = interactor;
     }
 
     @Override
     public void takeView(MainView view) {
         this.view = view;
-        interactor.startOrderBook();
         interactor.registerListener(this);
+        interactor.startOrderBook();
     }
 
     @Override

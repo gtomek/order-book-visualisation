@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import timber.log.Timber;
 import uk.co.tomek.orderbook.R;
-import uk.co.tomek.orderbook.data.OrderBookRepository;
 import uk.co.tomek.orderbook.domain.Interactor;
 import uk.co.tomek.orderbook.domain.OrderBookInteractor;
 import uk.co.tomek.orderbook.domain.OrderBookMapper;
@@ -46,8 +45,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         // As we cannot use any library we cannot also use Dagger or similar therefore
         // we have to relay on creation of instances somewhere (We could also e.g. create a
         // Dependency Resolver in Application class for application scoped instances)
-        OrderBookRepository repository = new OrderBookRepository(new OrderBookSimulator());
-        Interactor orderBookInteractor = new OrderBookInteractor(repository, new OrderBookMapper());
+        Interactor orderBookInteractor = new OrderBookInteractor(new OrderBookSimulator(), new OrderBookMapper());
         mainPresenter = new MainPresenter(orderBookInteractor);
     }
 

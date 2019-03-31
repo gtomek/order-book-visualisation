@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import uk.co.tomek.orderbook.data.OrderBookRepository;
 import uk.co.tomek.orderbook.ui.model.OrderRaw;
 import uk.co.tomek.orderbook.ui.model.OrdersViewItem;
 
