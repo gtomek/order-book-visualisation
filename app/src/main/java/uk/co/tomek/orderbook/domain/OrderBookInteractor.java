@@ -1,11 +1,12 @@
 package uk.co.tomek.orderbook.domain;
 
+import android.util.Log;
+
 import com.creditsuisse.orderbooksimulation.OrderBookData;
 import com.creditsuisse.orderbooksimulation.OrderBookSimulator;
 import com.creditsuisse.orderbooksimulation.OrderBookSimulatorListener;
 
 import androidx.annotation.NonNull;
-import timber.log.Timber;
 import uk.co.tomek.orderbook.ui.model.OrdersViewItem;
 
 /**
@@ -13,6 +14,7 @@ import uk.co.tomek.orderbook.ui.model.OrdersViewItem;
  */
 public final class OrderBookInteractor implements Interactor, OrderBookSimulatorListener {
 
+    private static final String TAG = OrderBookInteractor.class.getName();
     private final OrderBookSimulator simulator;
     private final OrderBookMapper mapper;
     private InteractorListener interactorListener;
@@ -39,12 +41,11 @@ public final class OrderBookInteractor implements Interactor, OrderBookSimulator
 
     @Override
     public void simulationStarts() {
-        Timber.v("simulationStarts");
+        Log.v(TAG, "simulationStarts");
     }
 
     @Override
     public void newTick(@NonNull OrderBookData orderBookData) {
-        Timber.v("newTick %s", orderBookData);
         final OrdersViewItem ordersViewItem = mapper.mapOrderBook(orderBookData);
         if (interactorListener != null) {
             interactorListener.onNewFormattedOrderTick(ordersViewItem);
@@ -53,6 +54,6 @@ public final class OrderBookInteractor implements Interactor, OrderBookSimulator
 
     @Override
     public void simulationCompleted() {
-        Timber.v("simulationCompleted");
+        Log.v(TAG, "simulationCompleted");
     }
 }
