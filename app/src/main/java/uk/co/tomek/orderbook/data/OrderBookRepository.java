@@ -13,11 +13,10 @@ import timber.log.Timber;
 public final class OrderBookRepository implements Repository, OrderBookSimulatorListener {
 
     private final OrderBookSimulator simulator;
-    private final RepositoryListener listener;
+    private RepositoryListener listener;
 
-    public OrderBookRepository(OrderBookSimulator simulator, RepositoryListener listener) {
+    public OrderBookRepository(OrderBookSimulator simulator) {
         this.simulator = simulator;
-        this.listener = listener;
     }
 
     @Override
@@ -28,7 +27,9 @@ public final class OrderBookRepository implements Repository, OrderBookSimulator
     @Override
     public void newTick(@NonNull OrderBookData orderBookData) {
         Timber.v("newTick %s", orderBookData);
-        listener.onNewTick(orderBookData);
+        if (listener != null) {
+            listener.onNewTick(orderBookData);
+        }
     }
 
     @Override
@@ -44,5 +45,10 @@ public final class OrderBookRepository implements Repository, OrderBookSimulator
     @Override
     public void stopSimulator() {
         simulator.stopSimulation();
+    }
+
+    @Override
+    public void registerListener(RepositoryListener listener) {
+        this.listener = listener;
     }
 }

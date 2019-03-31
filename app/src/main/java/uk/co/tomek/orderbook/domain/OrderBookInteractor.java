@@ -1,9 +1,6 @@
 package uk.co.tomek.orderbook.domain;
 
 import com.creditsuisse.orderbooksimulation.OrderBookData;
-import com.creditsuisse.orderbooksimulation.OrderBookSimulator;
-
-import java.lang.ref.WeakReference;
 
 import androidx.annotation.NonNull;
 import uk.co.tomek.orderbook.data.OrderBookRepository;
@@ -18,16 +15,16 @@ public final class OrderBookInteractor implements Interactor, RepositoryListener
 
     private final Repository repository;
     private final OrderBookMapper mapper;
-    private WeakReference<InteractorListener> listener;
+    private InteractorListener interactorListener;
 
-    public OrderBookInteractor(OrderBookMapper mapper, InteractorListener listener) {
-        this.repository = new OrderBookRepository(new OrderBookSimulator(), this);
+    public OrderBookInteractor(OrderBookRepository repository, OrderBookMapper mapper) {
+        this.repository = repository;
         this.mapper = mapper;
-        this.listener = new WeakReference<>(listener);
     }
 
     @Override
     public void startOrderBook() {
+        repository.registerListener(this);
         repository.startSimulator();
     }
 
@@ -39,9 +36,13 @@ public final class OrderBookInteractor implements Interactor, RepositoryListener
     @Override
     public void onNewTick(@NonNull OrderBookData orderBookData) {
         final OrdersViewItem ordersViewItem = mapper.mapOrderBook(orderBookData);
-        final InteractorListener interactorListener = listener.get();
         if (interactorListener != null) {
             interactorListener.onNewFormattedOrderTick(ordersViewItem);
         }
+    }
+
+    @Override
+    public void registerListener(InteractorListener interactorListener) {
+        this.interactorListener = interactorListener;
     }
 }

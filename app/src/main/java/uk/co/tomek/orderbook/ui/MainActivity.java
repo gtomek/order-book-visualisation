@@ -3,20 +3,22 @@ package uk.co.tomek.orderbook.ui;
 import android.os.Bundle;
 import android.view.View;
 
+import com.creditsuisse.orderbooksimulation.OrderBookSimulator;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import timber.log.Timber;
 import uk.co.tomek.orderbook.R;
+import uk.co.tomek.orderbook.data.OrderBookRepository;
 import uk.co.tomek.orderbook.domain.Interactor;
-import uk.co.tomek.orderbook.domain.InteractorListener;
 import uk.co.tomek.orderbook.domain.OrderBookInteractor;
 import uk.co.tomek.orderbook.domain.OrderBookMapper;
 import uk.co.tomek.orderbook.ui.custom.BarView;
 import uk.co.tomek.orderbook.ui.model.OrdersViewItem;
 
-public class MainActivity extends AppCompatActivity implements InteractorListener {
+public class MainActivity extends AppCompatActivity implements MainView {
 
-    private Interactor orderBookInteractor;
+    private Presenter mainPresenter;
     private BarView midPointView;
     private BarView sellItem1;
     private BarView sellItem2;
@@ -44,26 +46,36 @@ public class MainActivity extends AppCompatActivity implements InteractorListene
         // As we cannot use any library we cannot also use Dagger or similar therefore
         // we have to relay on creation of instances somewhere (We could also e.g. create a
         // Dependency Resolver in Application class for application scoped instances)
-        orderBookInteractor = new OrderBookInteractor(new OrderBookMapper(), this);
+        OrderBookRepository repository = new OrderBookRepository(new OrderBookSimulator());
+        Interactor orderBookInteractor = new OrderBookInteractor(repository, new OrderBookMapper());
+        mainPresenter = new MainPresenter(orderBookInteractor);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        orderBookInteractor.startOrderBook();
+        mainPresenter.takeView(this);
     }
 
     @Override
     protected void onPause() {
-        orderBookInteractor.stopOrderBook();
+        mainPresenter.dropView();
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
-        //simulator = null;
-        orderBookInteractor = null;
+        mainPresenter = null;
         super.onDestroy();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if(hasFocus) {
+            hideSystemUI();
+        }
     }
 
     private void hideSystemUI() {
