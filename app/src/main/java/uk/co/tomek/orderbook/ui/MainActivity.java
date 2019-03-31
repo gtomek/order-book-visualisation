@@ -1,7 +1,6 @@
 package uk.co.tomek.orderbook.ui;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.creditsuisse.orderbooksimulation.OrderBookSimulator;
@@ -89,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @Override
     public void onNewFormattedOrderTick(@NonNull OrdersViewItem ordersViewItem) {
-        Log.v("MainActivity", String.format("newTick ordersItems:%s",  ordersViewItem));
         midPointView.setTitle(ordersViewItem.getMidPointTitle());
         sellItem1.setValues(ordersViewItem.getSellList().get(0));
         sellItem2.setValues(ordersViewItem.getSellList().get(1));
