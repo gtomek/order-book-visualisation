@@ -3,6 +3,7 @@ package uk.co.tomek.orderbook.domain;
 import com.creditsuisse.orderbooksimulation.OrderBookData;
 import com.creditsuisse.orderbooksimulation.PriceLevelData;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,49 +18,32 @@ import uk.co.tomek.orderbook.ui.model.OrdersItem;
 public final class OrderBookMapper {
 
     public OrdersItem mapOrderBook(OrderBookData orderBookData) {
-        LinkedList<OrderRaw> sellList = new LinkedList<>();
-        LinkedList<OrderRaw> buyList = new LinkedList<>();
+        LinkedList<OrderRaw> sellViewList = new LinkedList<>();
+        LinkedList<OrderRaw> buyViewList = new LinkedList<>();
 
-        long minSellPrice = findMinPrice(orderBookData.sellSideData);
-        long maxBuyPrice = findMaxPrice(orderBookData.buySideData);
+        final List<PriceLevelData> sellInputData = orderBookData.sellSideData;
+        final List<PriceLevelData> buyInputData = orderBookData.buySideData;
+        // sort sell data descending
+        sellInputData.sort(new PriceComparator());
+        buyInputData.sort(new PriceComparator());
+
+        long minSellPrice = sellInputData.get(sellInputData.size() - 1).price;
+        long maxBuyPrice = buyInputData.get(0).price;
         String midPriceTitle = Long.toString((minSellPrice + maxBuyPrice) / 2);
 
-        // TODO: Improvements to be done, excessive looping thorough the same list
-        long totalSellQuantity = getTotalQuantity(orderBookData.sellSideData);
-        for (int i = orderBookData.sellSideData.size() - 1; i >= 0; i--) {
-            PriceLevelData priceData = orderBookData.sellSideData.get(i);
-            float priceFriction = (float) priceData.assetCount/totalSellQuantity;
-            sellList.add(new OrderRaw(priceFriction, Long.toString(priceData.price)));
+        long totalSellQuantity = getTotalQuantity(sellInputData);
+        for (PriceLevelData priceData : sellInputData) {
+            float priceFriction = (float) priceData.assetCount / totalSellQuantity;
+            sellViewList.add(new OrderRaw(priceFriction, Long.toString(priceData.price)));
         }
 
-        long totalBuyQuantity = getTotalQuantity(orderBookData.buySideData);
-        for (PriceLevelData priceData : orderBookData.buySideData) {
-            float priceFriction = (float) priceData.assetCount/totalBuyQuantity;
-            buyList.add(new OrderRaw(priceFriction, Long.toString(priceData.price)));
+        long totalBuyQuantity = getTotalQuantity(buyInputData);
+        for (PriceLevelData priceData : buyInputData) {
+            float priceFriction = (float) priceData.assetCount / totalBuyQuantity;
+            buyViewList.add(new OrderRaw(priceFriction, Long.toString(priceData.price)));
         }
 
-
-        return new OrdersItem(sellList, midPriceTitle, buyList);
-    }
-
-    private long findMinPrice(List<PriceLevelData> orderData) {
-        long minPrice = orderData.get(0).price;
-        for (PriceLevelData priceData : orderData) {
-            if (priceData.price < minPrice) {
-                minPrice = priceData.price;
-            }
-        }
-        return minPrice;
-    }
-
-    private long findMaxPrice(List<PriceLevelData> orderData) {
-        long maxPrice = orderData.get(0).price;
-        for (PriceLevelData priceData : orderData) {
-            if (priceData.price > maxPrice) {
-                maxPrice = priceData.price;
-            }
-        }
-        return maxPrice;
+        return new OrdersItem(sellViewList, midPriceTitle, buyViewList);
     }
 
     private long getTotalQuantity(List<PriceLevelData> orderData) {
@@ -68,5 +52,13 @@ public final class OrderBookMapper {
             totalQuantity += priceData.assetCount;
         }
         return totalQuantity;
+    }
+
+    private static final class PriceComparator implements Comparator<PriceLevelData> {
+        @Override
+        public int compare(PriceLevelData price1, PriceLevelData price2) {
+            return Long.compare(price2.price, price1.price);
+        }
+
     }
 }
